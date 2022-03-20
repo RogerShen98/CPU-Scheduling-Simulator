@@ -22,7 +22,9 @@ int sizeOfArray(int[]);
 double average(int[], int);
 double rate(int[],int[],int);
 void idChange(int[],int[],int[],int[],int);
+void SJFChange(int[],int[],int[],int[],int);
 void swap(int[],int,int,int);
+bool isEmpty(int[],int);
 
 int main()
 {
@@ -138,7 +140,7 @@ void idChange(int id[],int arrive[],int burst[],int priority[],int size){
 
 }
 
-// switch the id index since FCFS depends on arrival time and shorter burst time
+// switch the id index since SJF depends on arrival time and shorter burst time
 void SJFChange(int id[],int arrive[],int burst[],int priority[],int size){
 
     int queue[SIZE] = {0},indexq[SIZE] = {0},time, arr = 0, index = 0, counter =0,queueSize,burstTime;
@@ -190,7 +192,6 @@ void SJFChange(int id[],int arrive[],int burst[],int priority[],int size){
     }
     
 }
-
 
 
 // swap array index
@@ -268,11 +269,96 @@ void SJF(int pid[],int arrivalTime[],int burstTime[],int priority[]){
     cout << "Average turnaround time: " << average(turnaroundTime,size) << " ms" << endl;
     cout << "CPU utilization rate: " << rate(burstTime,endTime,size) << "%" << endl;
 }
+
+
 void PPS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
-    cout << 3;
+    int size = 0, start = 0,end = 0;
+    
+    size = sizeOfArray(pid);
+
+    int startTime[size],endTime[size],turnaroundTime[size],waitingTime[size],responseTime[size];
+    double averageWaitingTime, averageResponseTime, averageTurnaroundTime, CPUUtilizationRate;
+    int burst[size],time=0,arrive[SIZE]={0},id[SIZE]={0},counter=0,wait[SIZE]={0},arriveC=0;
+
+
+    // get all the burst time in an array
+    for(int i = 0; i < size;i++){
+        burst[i] = burstTime[i];
+    }
+
+    while(!isEmpty(burst,size)){ 
+        for(int i = 0; i < size; i++){
+            if(arrivalTime[i] == time){
+            
+                arrive[arriveC] = pid[i];
+                arriveC++;
+                
+            }
+            
+        }
+
+        int arrSize = sizeOfArray(arrive);
+        
+        if(arrSize>1){
+            for(int i = 0; i < arrSize; i++){
+                for(int j = i+1; j < arrSize; j++){
+                    if(priority[arrive[i]-1] > priority[arrive[j]-1])
+                        swap(arrive,i,j,arrSize);
+                }
+            }
+            
+        }
+
+        cout << "P" << arrive[0] << " is running!\t" << time+1 << "ms" << endl;
+        burst[arrive[0]-1] -= 1;
+
+        if(burst[arrive[0]-1]==burstTime[arrive[0]-1]-1)
+            startTime[arrive[0]-1] = time;
+
+        if(burst[arrive[0]-1] == 0){
+            endTime[arrive[0]-1] = time+1;
+            cout << "P" << arrive[0] << " is done!" << endl;
+            if(arrSize == 1){
+                arrive[0] = 0;
+                
+            }
+
+            else{
+                for(int i = 1; i < arrSize; i++){
+                    arrive[i-1] = arrive[i];
+                }
+                
+            }
+            arriveC--;
+        }
+        
+        time++;
+    }
+
+    for(int i = 0; i < size; i++){
+        turnaroundTime[i] = endTime[i] - arrivalTime[i];
+        waitingTime[i] = turnaroundTime[i] - burstTime[i];
+        responseTime[i] = startTime[i] - arrivalTime[i];
+       
+    }  
+
+    cout << "\nAverage waiting time: " << average(waitingTime,size) << " ms" << endl;
+    cout << "Average response time: " << average(responseTime,size) << " ms" << endl;
+    cout << "Average turnaround time: " << average(turnaroundTime,size) << " ms" << endl;
+    cout << "CPU utilization rate: " << rate(burstTime,endTime,size) << "%" << endl;
+
 }
 void RR(int pid[],int arrivalTime[],int burstTime[],int priority[]){
     cout << 4;
+}
+
+bool isEmpty(int array[],int size){
+    for(int i = 0; i < size; i++){
+        if(array[i] != 0){
+            return false;
+        }
+    }
+    return true;
 }
 
 
