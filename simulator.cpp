@@ -104,13 +104,13 @@ double average(int array[], int size){
 
 // returns the CPU utilization rate 
 double rate(int burst[],int end[],int size){
-    int sum,max = 0;
+    int sum = 0,max = 0;
     for(int i = 0; i < size; i++){
         sum += burst[i];
         if(end[i]>max)
             max = end[i];
     }
-    return sum / max *100;
+    return 100* sum / max ;
 }
 
 void FCFS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
@@ -119,10 +119,10 @@ void FCFS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
     
     size = sizeOfArray(pid);
 
-    int startTime[size],endTime[size],turnAround[size],waitingTime[size],responseTime[size];
+    int startTime[size],endTime[size],turnaroundTime[size],waitingTime[size],responseTime[size];
     double averageWaitingTime, averageResponseTime, averageTurnaroundTime, CPUUtilizationRate;
    
-    for(int i = 0; i < size ; i++){
+    for(int i = 0; i < size; i++){
         start = end;
         startTime[i] = start;
         end += burstTime[i];
@@ -132,15 +132,16 @@ void FCFS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
             cout << "P" << pid[i] << " is running!\t" << j+1 << "ms" << endl;
         cout << "P" << pid[i] << " is done!" << endl;
 
-        turnaround[i] = endTime[i] - arrivalTime[i];
-        waitingTime[i] = turnaround[i] - burstTime[i];
+        turnaroundTime[i] = endTime[i] - arrivalTime[i];
+        waitingTime[i] = turnaroundTime[i] - burstTime[i];
         responseTime[i] = startTime[i] - arrivalTime[i];
+       
     }  
 
-    cout << "\nAverage waiting time: " << average(waitingTime,size) << endl;
-    cout << "Average response time: " << average(responseTime,size) << endl;
-    cout << "Average turnaround time: " << average(turnaroundTime,size) << endl;
-    cout << "CPU utilization rate: " << rate(burstTime,end,size) << "%" << endl;
+    cout << "\nAverage waiting time: " << average(waitingTime,size) << " ms" << endl;
+    cout << "Average response time: " << average(responseTime,size) << " ms" << endl;
+    cout << "Average turnaround time: " << average(turnaroundTime,size) << " ms" << endl;
+    cout << "CPU utilization rate: " << rate(burstTime,endTime,size) << "%" << endl;
     
     
 }
