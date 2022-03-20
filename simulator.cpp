@@ -138,6 +138,61 @@ void idChange(int id[],int arrive[],int burst[],int priority[],int size){
 
 }
 
+// switch the id index since FCFS depends on arrival time and shorter burst time
+void SJFChange(int id[],int arrive[],int burst[],int priority[],int size){
+
+    int queue[SIZE] = {0},indexq[SIZE] = {0},time, arr = 0, index = 0, counter =0,queueSize,burstTime;
+
+    arr = arrive[0];
+    for(int i = 1; i < size; i++){
+        if(arrive[i]<arr){
+            arr = arrive[i];
+            index = i;
+        }
+    }
+
+    swap(id,0,index,size);
+    swap(arrive,0,index,size);
+    swap(burst,0,index,size);
+    swap(priority,0,index,size);
+    
+    for(int i = 1; i < size; i++){
+        for(int j = i+1; j < size; j++){
+            if(arrive[j]<=burst[i-1]){
+                
+                queue[counter] = burst[j];
+                indexq[counter] = j;
+            
+            }
+            counter++;
+            
+        }
+        queueSize = sizeOfArray(queue);
+        if(queueSize != 0){
+            burstTime = queue[0];
+            index = 0;
+            for(int j = 1; j < queueSize; j++){
+                if(queue[j] <  burstTime){
+                    burstTime = queue[j];
+                    index = j;
+                }   
+            }  
+        
+            swap(id,i,indexq[index],size);
+            swap(arrive,i,indexq[index],size);
+            swap(burst,i,indexq[index],size);
+            swap(priority,i,indexq[index],size);
+        }
+
+      
+        
+        
+    }
+    
+}
+
+
+
 // swap array index
 void swap(int array[],int index1, int index2, int size){
     int temp = array[index1];
@@ -183,7 +238,35 @@ void FCFS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
 }
 
 void SJF(int pid[],int arrivalTime[],int burstTime[],int priority[]){
-    cout << 2;
+    int size = 0, start = 0,end = 0;
+    
+    size = sizeOfArray(pid);
+
+    int startTime[size],endTime[size],turnaroundTime[size],waitingTime[size],responseTime[size];
+    double averageWaitingTime, averageResponseTime, averageTurnaroundTime, CPUUtilizationRate;
+    
+    SJFChange(pid,arrivalTime,burstTime,priority,size);
+
+    for(int i = 0; i < size; i++){
+        start = end;
+        startTime[i] = start;
+        end += burstTime[i];
+        endTime[i] = end;
+        
+        for(int j = start; j < end; j++)
+            cout << "P" << pid[i] << " is running!\t" << j+1 << "ms" << endl;
+        cout << "P" << pid[i] << " is done!" << endl;
+
+        turnaroundTime[i] = endTime[i] - arrivalTime[i];
+        waitingTime[i] = turnaroundTime[i] - burstTime[i];
+        responseTime[i] = startTime[i] - arrivalTime[i];
+       
+    }  
+
+    cout << "\nAverage waiting time: " << average(waitingTime,size) << " ms" << endl;
+    cout << "Average response time: " << average(responseTime,size) << " ms" << endl;
+    cout << "Average turnaround time: " << average(turnaroundTime,size) << " ms" << endl;
+    cout << "CPU utilization rate: " << rate(burstTime,endTime,size) << "%" << endl;
 }
 void PPS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
     cout << 3;
