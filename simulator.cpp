@@ -6,6 +6,7 @@ CS4310 Project 1
 #include <iostream> // input and output
 #include <fstream>  // read from file
 #include <string>   // string library
+#include <algorithm> // sort
 
 using namespace std;
 
@@ -20,6 +21,8 @@ void RR(int[],int[],int[],int[]);
 int sizeOfArray(int[]);
 double average(int[], int);
 double rate(int[],int[],int);
+void idChange(int[],int[],int[],int[],int);
+void swap(int[],int,int,int);
 
 int main()
 {
@@ -113,15 +116,48 @@ double rate(int burst[],int end[],int size){
     return 100* sum / max ;
 }
 
+// switch the id index since FCFS depends on arrival time 
+void idChange(int id[],int arrive[],int burst[],int priority[],int size){
+    int arr = 0, index = 0;
+    for(int i = 0; i < size; i++){
+        index = i;
+        arr = arrive[i];
+        for(int j = i+1; j < size; j++){
+            
+            if(arrive[j]<arr){
+                index = j;
+                arr = arrive[j];
+            }
+        }
+        swap(id,i,index,size);
+        swap(arrive,i,index,size);
+        swap(burst,i,index,size);
+        swap(priority,i,index,size);
+    }
+
+
+}
+
+// swap array index
+void swap(int array[],int index1, int index2, int size){
+    int temp = array[index1];
+    array[index1] = array[index2];
+    array[index2] = temp;
+}
+
 void FCFS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
-    
+    // whichever arrives first gets implemented first
     int size = 0, start = 0,end = 0;
     
     size = sizeOfArray(pid);
 
     int startTime[size],endTime[size],turnaroundTime[size],waitingTime[size],responseTime[size];
     double averageWaitingTime, averageResponseTime, averageTurnaroundTime, CPUUtilizationRate;
-   
+    
+    idChange(pid,arrivalTime,burstTime,priority,size);
+
+    
+
     for(int i = 0; i < size; i++){
         start = end;
         startTime[i] = start;
