@@ -1,6 +1,12 @@
 # CPU-Scheduling-Simulator
 
-Write a program to simulate following CPU scheduling algorithms:
+COMPILATION:
+run:
+	g++ simulator.cpp
+	./a.out
+  
+
+This program simulates the following CPU scheduling algorithms:
 
 1) First Come First Serve (FCFS)
 
@@ -26,9 +32,9 @@ Priority is the priority associated with each task with low numbers representing
 
 Note: for RR algorithm you need to define a Time-quantum.
 
-What to do?
 
-Create a simple user interface to ask user for input.txt file, a scheduling algorithm and Time-quantum if RR is chosen.
+
+It creates a simple user interface to ask user for input.txt file, a scheduling algorithm and Time-quantum if RR is chosen.
 
 Print progress of task every unit time (millisecond).
 Once all tasks are completed, the program should compute and print :
@@ -36,3 +42,8 @@ Average waiting time
 Average response time
 Average turnaround time
 CPU utilization rate
+
+
+NOTE: the program asks the user which algorithm to choose for the scheduling. Choose between 1 and 4. 
+
+If 4 is chosen, the user needs to input a time quantum for the Round Robin algorithm.
