@@ -2,6 +2,7 @@
 Liangjie Shen 
 CS4310 Project 1
 3/20/2022
+CPU Scheduling Simulator 
 */
 #include <iostream> // input and output
 #include <fstream>  // read from file
