@@ -17,7 +17,7 @@ using namespace std;
 void FCFS(int[],int[],int[],int[]); 
 void SJF(int[],int[],int[],int[]);
 void PPS(int[],int[],int[],int[]);
-void RR(int[],int[],int[],int[]);
+void RR(int[],int[],int[],int[],int);
 int sizeOfArray(int[]);
 double average(int[], int);
 double rate(int[],int[],int);
@@ -25,6 +25,9 @@ void idChange(int[],int[],int[],int[],int);
 void SJFChange(int[],int[],int[],int[],int);
 void swap(int[],int,int,int);
 bool isEmpty(int[],int);
+void swapEnd(int[],int);
+int getNonZeroIndex(int[],int);
+void removeRepetition(int[],int size);
 
 int main()
 {
@@ -77,7 +80,7 @@ int main()
             break;
             
         case 4:
-            RR(pid,arrivalTime,burstTime,priority); // Round Robin
+            RR(pid,arrivalTime,burstTime,priority,timeQuantum); // Round Robin
             break;
        
     }
@@ -211,8 +214,6 @@ void FCFS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
     double averageWaitingTime, averageResponseTime, averageTurnaroundTime, CPUUtilizationRate;
     
     idChange(pid,arrivalTime,burstTime,priority,size);
-
-    
 
     for(int i = 0; i < size; i++){
         start = end;
@@ -348,8 +349,85 @@ void PPS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
     cout << "CPU utilization rate: " << rate(burstTime,endTime,size) << "%" << endl;
 
 }
-void RR(int pid[],int arrivalTime[],int burstTime[],int priority[]){
-    cout << 4;
+
+
+void RR(int pid[],int arrivalTime[],int burstTime[],int priority[],int quantum){
+    int size = 0, start = 0,end = 0;
+    
+    size = sizeOfArray(pid);
+
+    int startTime[size],endTime[size],turnaroundTime[size],waitingTime[size],responseTime[size];
+    double averageWaitingTime, averageResponseTime, averageTurnaroundTime, CPUUtilizationRate;
+
+    int burst[size],time=0,arrive[SIZE]={0},id[SIZE]={0},counter=0,wait[SIZE]={0},arriveC=0;
+    int maxTime=0,arrSize;
+
+    // get all the burst time in an array
+    for(int i = 0; i < size;i++){
+        burst[i] = burstTime[i];
+    }
+ 
+  
+    while(!isEmpty(burst,size)){ 
+
+        for(int i = 0; i < size; i++){
+            
+            if(arrivalTime[i] == time){
+                
+                arrive[arriveC] = pid[i];
+                arriveC++;
+            }
+        }
+        maxTime++;
+        arrSize = sizeOfArray(arrive);
+        
+        if(maxTime > quantum){
+            maxTime = 1;
+            swapEnd(arrive,arrSize);
+        }
+      
+        cout << "P" << arrive[0] << " is running!\t" << time+1 << "ms" << endl;
+        burst[arrive[0]-1] -= 1;
+        
+
+        if(burst[arrive[0]-1]==burstTime[arrive[0]-1]-1)
+            startTime[arrive[0]-1] = time;
+
+        if(burst[arrive[0]-1] == 0){
+            endTime[arrive[0]-1] = time+1;
+            cout << "P" << arrive[0] << " is done!" << endl;
+            maxTime = 0;
+
+            int element = arrive[0];
+            while(true){
+                if(element != arrive[0]||isEmpty(burst,size))
+                    break;
+                for(int i = 1; i < arrSize; i++){
+                    arrive[i-1] = arrive[i];
+                }
+
+            }
+      
+            arriveC--;
+        }
+        
+        time++;
+    }
+
+    
+
+    for(int i = 0; i < size; i++){
+        turnaroundTime[i] = endTime[i] - arrivalTime[i];
+        waitingTime[i] = turnaroundTime[i] - burstTime[i];
+        responseTime[i] = startTime[i] - arrivalTime[i];
+       
+    }  
+
+    cout << "\nAverage waiting time: " << average(waitingTime,size) << " ms" << endl;
+    cout << "Average response time: " << average(responseTime,size) << " ms" << endl;
+    cout << "Average turnaround time: " << average(turnaroundTime,size) << " ms" << endl;
+    cout << "CPU utilization rate: " << rate(burstTime,endTime,size) << "%" << endl;
+
 }
 
 bool isEmpty(int array[],int size){
@@ -362,4 +440,17 @@ bool isEmpty(int array[],int size){
 }
 
 
+// swap the element to the end of the array
+void swapEnd(int array[],int size){
+
+    for(int i = 1; i < size; i++){
+        
+        int temp = array[i-1];
+        array[i-1] = array[i];
+        array[i] = temp;
+        
+
+    }
+
+}
 
