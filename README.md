@@ -47,3 +47,6 @@ CPU utilization rate
 NOTE: the program asks the user which algorithm to choose for the scheduling. Choose between 1 and 4. 
 
 If 4 is chosen, the user needs to input a time quantum for the Round Robin algorithm.
+
+input.txt file must be in the same folder as the program.
+The info has to be in a matrix form.
