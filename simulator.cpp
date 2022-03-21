@@ -27,7 +27,8 @@ void swap(int[],int,int,int);
 bool isEmpty(int[],int);
 void swapEnd(int[],int);
 int getNonZeroIndex(int[],int);
-void removeRepetition(int[],int size);
+void removeRepetition(int[],int);
+bool allZero(int[],int);
 
 int main()
 {
@@ -143,57 +144,87 @@ void idChange(int id[],int arrive[],int burst[],int priority[],int size){
 
 }
 
+bool allZero(int array[],int size){
+    for(int i = 0; i < size; i++){
+        if(array[i]!=0)
+            return false;
+    }
+    return true;
+}
+
 // switch the id index since SJF depends on arrival time and shorter burst time
 void SJFChange(int id[],int arrive[],int burst[],int priority[],int size){
 
     int queue[SIZE] = {0},indexq[SIZE] = {0},time, arr = 0, index = 0, counter =0,queueSize,burstTime;
 
-    arr = arrive[0];
-    for(int i = 1; i < size; i++){
-        if(arrive[i]<arr){
-            arr = arrive[i];
-            index = i;
-        }
-    }
-
-    swap(id,0,index,size);
-    swap(arrive,0,index,size);
-    swap(burst,0,index,size);
-    swap(priority,0,index,size);
-    
-    for(int i = 1; i < size; i++){
-        for(int j = i+1; j < size; j++){
-            if(arrive[j]<=burst[i-1]){
-                
-                queue[counter] = burst[j];
-                indexq[counter] = j;
-            
-            }
-            counter++;
-            
-        }
-        queueSize = sizeOfArray(queue);
-        if(queueSize != 0){
-            burstTime = queue[0];
-            index = 0;
-            for(int j = 1; j < queueSize; j++){
-                if(queue[j] <  burstTime){
-                    burstTime = queue[j];
+    if(allZero(arrive,size)){
+        int maxBurst = 0,index;
+        for(int i = 0; i < size;i++){
+            maxBurst = burst[i];
+            for(int j = i+1; j < size;j++){
+                if(burst[j] > maxBurst){
+                    maxBurst=burst[j];
                     index = j;
-                }   
-            }  
-        
-            swap(id,i,indexq[index],size);
-            swap(arrive,i,indexq[index],size);
-            swap(burst,i,indexq[index],size);
-            swap(priority,i,indexq[index],size);
+                }
+            }
+
+            if(maxBurst != burst[i]){
+                swap(id,i,index,size);
+                swap(arrive,i,index,size);
+                swap(burst,i,index,size);
+                swap(priority,i,index,size);
+                
+            }    
+        }
+    }
+
+    else{
+        arr = arrive[0];
+        for(int i = 1; i < size; i++){
+            if(arrive[i]<arr){
+                arr = arrive[i];
+                index = i;
+            }
         }
 
-      
+        swap(id,0,index,size);
+        swap(arrive,0,index,size);
+        swap(burst,0,index,size);
+        swap(priority,0,index,size);
         
+        for(int i = 1; i < size; i++){
+            for(int j = i+1; j < size; j++){
+                if(arrive[j]<=burst[i-1]){
+                    
+                    queue[counter] = burst[j];
+                    indexq[counter] = j;
+                
+                }
+                counter++;
+                
+            }
+            queueSize = sizeOfArray(queue);
+            if(queueSize != 0){
+                burstTime = queue[0];
+                index = 0;
+                for(int j = 1; j < queueSize; j++){
+                    if(queue[j] <  burstTime){
+                        burstTime = queue[j];
+                        index = j;
+                    }   
+                }  
+            
+                swap(id,i,indexq[index],size);
+                swap(arrive,i,indexq[index],size);
+                swap(burst,i,indexq[index],size);
+                swap(priority,i,indexq[index],size);
+            }
+
         
+            
+            
+        }
     }
-    
 }
 
 
@@ -239,6 +270,8 @@ void FCFS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
     
 }
 
+
+
 void SJF(int pid[],int arrivalTime[],int burstTime[],int priority[]){
     int size = 0, start = 0,end = 0;
     
@@ -270,7 +303,6 @@ void SJF(int pid[],int arrivalTime[],int burstTime[],int priority[]){
     cout << "Average turnaround time: " << average(turnaroundTime,size) << " ms" << endl;
     cout << "CPU utilization rate: " << rate(burstTime,endTime,size) << "%" << endl;
 }
-
 
 void PPS(int pid[],int arrivalTime[],int burstTime[],int priority[]){
     int size = 0, start = 0,end = 0;
